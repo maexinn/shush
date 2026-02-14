@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>love virus</title>
+  <style>
+    html,body{height:100%;margin:0}
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(180deg,#fce4ec,#f8bbd0);
+      color:#fff;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      -webkit-font-smoothing:antialiased;
+      text-align:center;
+      padding:24px;
+      overflow:hidden;
+    }
+    .card{
+      max-width:900px;
+    }
+    h1{font-size:clamp(28px,6vw,68px);margin:0 0 8px;color:#e91e63}
+    p{margin:0 0 20px;color:#c2185b}
+    .hint{font-size:14px;opacity:0.9;color:#ad1457}
+    a.heart{color:#e91e63;text-decoration:none}
+    .btn {
+      display:inline-block;
+      padding:10px 16px;
+      border-radius:10px;
+      background:#e91e63;
+      color:#fff;
+      border:none;
+      font-weight:600;
+      cursor:pointer;
+      margin-top:8px;
+      box-shadow:0 6px 18px rgba(233,30,99,0.3);
+      transition:transform 0.2s;
+    }
+    .btn:hover{transform:scale(1.05)}
+    .btn:active{transform:translateY(1px)}
+    
+    canvas.confetti-canvas{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+
+    
+    .modal {
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,0.6);
+      z-index:10000;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 180ms ease;
+      padding:24px;
+    }
+    .modal[data-open="true"]{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .modal-dialog{
+      width:100%;
+      max-width:720px;
+      max-height:85vh;
+      background:linear-gradient(180deg, rgba(255,182,193,0.95), rgba(255,192,203,0.95));
+      border-radius:14px;
+      box-shadow:0 20px 40px rgba(233,30,99,0.3);
+      color:#880e4f;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      border:2px solid #e91e63;
+    }
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 18px;
+      gap:12px;
+      border-bottom:1px solid rgba(233,30,99,0.2);
+      background:#f50057;
+    }
+    .modal-title{font-weight:700;color:#fff}
+    .modal-close{
+      background:transparent;
+      border:0;
+      color:#fff;
+      font-size:20px;
+      cursor:pointer;
+      padding:6px;
+      border-radius:8px;
+    }
+    .modal-close:active{transform:translateY(1px)}
+    .modal-body{
+      padding:16px 18px;
+      overflow:auto;
+      line-height:1.5;
+      font-size:16px;
+      color:#880e4f;
+    }
+    .letter-content p{margin:0 0 12px}
+    .heart-emoji{display:inline-block;margin:0 4px}
+    @media (max-width:420px){
+      .modal-dialog{border-radius:10px}
+      .modal-body{font-size:15px}
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Happy Valentine's Day Chichiii💕</h1>
+    <p>I hope you'll like this lil gift I made for you:). <span style="display:inline-block;margin-left:6px">💗</span></p>
+    <p class="hint">p.s Click on the screen to for a simple but cute surprise :)</p>
+
+    <div style="margin-top:12px">
+      <button id="openLetter" class="btn" aria-haspopup="dialog" aria-controls="letterModal">Open My Letter</button>
+    </div>
+  </div>
+
+  
+  <div id="letterModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" data-open="false">
+    <div class="modal-dialog" role="document">
+      <div class="modal-header">
+        <div class="modal-title">A letter from mae's heart 💌</div>
+        <button class="modal-close" id="closeLetter" aria-label="Close letter">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="letter-content">
+          <p>Happy Valentine's Day Liamm! 💕</p>
+
+          <p> Happy Valentine's day twinnn</p>
+
+          <p> Tysm for always being there for me and even though we rarely talk nowadays i just wanna say i luh yuh twinn</p>
+
+          <p> May all femboys come ur way</p>
+
+          <p> LOL anyways I hope you'll like this simple letter I made for youu:)</p>
+
+          <p>I LOVEEE YAAA SOOOO MUCH!!ヽ(*´＾｀)ﾉ 💕✨ 
+            <span class="heart-emoji">💗</span><span class="heart-emoji">💖</span><span class="heart-emoji">💝</span>
+          </p>
+
+          <p>Loveeee,<br>maeee❤️</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="hearts.js"></script>
+  <script>
+    
+    (function(){
+      
+      let lastTouchTime = 0;
+
+      function handlePointer(x, y){ if(typeof spawnHearts === 'function') spawnHearts(x, y); }
+
+      document.addEventListener('touchstart', function(ev){
+        lastTouchTime = Date.now();
+        const t = ev.touches && ev.touches[0];
+        if(t){ handlePointer(t.clientX, t.clientY); }
+      }, {passive:true});
+
+      document.addEventListener('click', function(ev){
+        
+        if(Date.now() - lastTouchTime < 600) return;
+        handlePointer(ev.clientX, ev.clientY);
+      });
+
+      
+      document.addEventListener('keydown', function(ev){
+        if(ev.key === 'Enter' || ev.key === ' '){
+          const cx = window.innerWidth/2;
+          const cy = window.innerHeight/2;
+          handlePointer(cx, cy);
+        }
+      });
+    })();
+
+    
+    (function(){
+      const openBtn = document.getElementById('openLetter');
+      const closeBtn = document.getElementById('closeLetter');
+      const modal = document.getElementById('letterModal');
+
+      function openModal(){
+        modal.setAttribute('data-open','true');
+        modal.setAttribute('aria-hidden','false');
+       
+        try {
+          if(typeof spawnHearts === 'function'){
+            const cx = window.innerWidth/2;
+            const cy = window.innerHeight/2;
+            spawnHearts(cx, cy, {count: 80});
+          }
+        } catch(e){/* ignore if hearts not available */}
+        
+        document.body.style.overflow = 'hidden';
+       
+        closeBtn.focus();
+      }
+
+      function closeModal(){
+        modal.setAttribute('data-open','false');
+        modal.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+        openBtn.focus();
+      }
+
+      openBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        openModal();
+      });
+
+      closeBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        closeModal();
+      });
+
+      
+      modal.addEventListener('click', function(e){
+        if(e.target === modal) closeModal();
+      });
+
+      
+      document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape' && modal.getAttribute('data-open') === 'true') closeModal();
+      });
+
+      
+      document.addEventListener('focus', function(ev){
+        if(modal.getAttribute('data-open') === 'true' && !modal.contains(ev.target)){
+          ev.stopPropagation();
+          closeBtn.focus();
+        }
+      }, true);
+
+      
+      try{
+        
+        setTimeout(openModal, 250);
+      }catch(e){/* ignore */}
+    })();
+  </script>
+</body>
+</html>
